@@ -1,3 +1,55 @@
+# Environment variables
 *.env
+.env
+
+# Virtual environment
 venv/
-./agent/workflows
+env/
+ENV/
+
+# Python cache
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+
+# Distribution / packaging
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# PyCharm
+.idea/
+
+# VS Code
+.vscode/
+
+# ChromaDB storage
+chroma_db/
+*.chroma
+
+# Exported architectures
+architecture_*.json
+
+# Test files
+test_migration.py
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
