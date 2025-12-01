@@ -10,7 +10,7 @@ from memory import ProjectMemory
 class ArchitectureAgent:
     def __init__(self, project_id: str):
         self.project_id = project_id
-        self.memory = ProjectMemory()
+        self.memory = ProjectMemory(project_id)  # Pass project_id to memory
         self.retrieval = Retrieval(project_id)
 
     def plan(self, idea: str):
