@@ -5,13 +5,13 @@ from typing import Dict, List, Any, Optional
 genai.configure(api_key=os.getenv("GEMINI_API_KEY"))
 model = genai.GenerativeModel('gemini-1.5-flash')
 
-from system_architect.core.retrieval import Retrieval
-from system_architect.core.memory import ProjectMemory
-from system_architect.engines.requirements_extractor import RequirementsExtractor
-from system_architect.engines.architecture_generator import ArchitectureGenerator
-from system_architect.engines.component_explainer import ComponentExplainer
-from system_architect.engines.tech_stack_recommender import TechStackRecommender
-from system_architect.engines.scope_detector import ScopeDetector
+from .retrieval import Retrieval
+from .memory import ProjectMemory
+from ..engines.requirements_extractor import RequirementsExtractor
+from ..engines.architecture_generator import ArchitectureGenerator
+from ..engines.component_explainer import ComponentExplainer
+from ..engines.tech_stack_recommender import TechStackRecommender
+from ..engines.scope_detector import ScopeDetector
 
 
 class ArchitectureAgent:

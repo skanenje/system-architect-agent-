@@ -13,10 +13,10 @@ This package provides tools for:
 __version__ = "0.1.0"
 __author__ = "System Architect Agent Team"
 
-from .core.agent import SystemArchitectAgent
+from .core.agent import ArchitectureAgent
 from .core.memory import ProjectMemory
 
 __all__ = [
-    "SystemArchitectAgent",
+    "ArchitectureAgent",
     "ProjectMemory",
 ]

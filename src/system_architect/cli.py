@@ -3,7 +3,7 @@
 import uuid
 import os
 from dotenv import load_dotenv
-from system_architect.core.agent import ArchitectureAgent
+from .core.agent import ArchitectureAgent
 
 # Load environment variables
 load_dotenv()

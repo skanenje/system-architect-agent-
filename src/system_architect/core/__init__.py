@@ -4,12 +4,12 @@ Core components of the System Architecture Agent.
 This module contains the main agent orchestrator and memory management.
 """
 
-from .agent import SystemArchitectAgent
+from .agent import ArchitectureAgent
 from .memory import ProjectMemory
-from .retrieval import VectorRetrieval
+from .retrieval import Retrieval
 
 __all__ = [
-    "SystemArchitectAgent",
+    "ArchitectureAgent",
     "ProjectMemory",
-    "VectorRetrieval",
+    "Retrieval",
 ]

@@ -2,8 +2,8 @@
 Utility functions and templates for the System Architecture Agent.
 """
 
-from .architecture_templates import ARCHITECTURE_TEMPLATES
+from .architecture_templates import ArchitectureTemplates
 
 __all__ = [
-    "ARCHITECTURE_TEMPLATES",
+    "ArchitectureTemplates",
 ]

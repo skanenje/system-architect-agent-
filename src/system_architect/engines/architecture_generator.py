@@ -9,7 +9,7 @@ import os
 import json
 import google.generativeai as genai
 from typing import Dict, List, Any
-from system_architect.utils.architecture_templates import ArchitectureTemplates
+from ..utils.architecture_templates import ArchitectureTemplates
 
 genai.configure(api_key=os.getenv("GEMINI_API_KEY"))
 model = genai.GenerativeModel('gemini-1.5-flash')
