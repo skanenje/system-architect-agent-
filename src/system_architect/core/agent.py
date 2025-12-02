@@ -3,7 +3,7 @@ import google.generativeai as genai
 from typing import Dict, List, Any, Optional
 
 genai.configure(api_key=os.getenv("GEMINI_API_KEY"))
-model = genai.GenerativeModel('gemini-1.5-flash')
+model = genai.GenerativeModel('gemini-2.5-flash')
 
 from .retrieval import Retrieval
 from .memory import ProjectMemory
