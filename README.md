@@ -47,7 +47,10 @@ The System Architecture Agent is your AI consultant for system design. Give it a
 - Options: Accept, Replace, Defer, or Cancel
 
 ### Enhanced Memory (FR-5)
-- Chat-scoped project memory
+- Chat-scoped project memory with intelligent keyword-based retrieval
+- No embeddings = No rate limits on free Gemini API
+- Fast in-memory storage with automatic pruning
+- Type-based filtering and recency awareness
 - Stores: requirements, architecture, components, data flows, decisions, open questions
 - Vector search for context-aware Q&A
 - JSON export capability
@@ -207,6 +210,6 @@ This is a POC (Proof of Concept). Feedback and suggestions are welcome!
 ## 🙏 Acknowledgments
 
 - Built with [Google Gemini](https://deepmind.google/technologies/gemini/)
-- Vector storage by [ChromaDB](https://www.trychroma.com/)
+- Smart keyword-based memory system (no embeddings needed!)
 - Inspired by the need for better architecture planning tools
 
