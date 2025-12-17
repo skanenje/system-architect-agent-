@@ -1,3 +1,9 @@
+"""
+Task Analysis Memory System
+
+Stores Upwork job analysis including requirements, complexity, tech stack, and risks.
+"""
+
 import json
 from typing import Dict, List, Any, Optional
 from datetime import datetime
@@ -5,9 +11,8 @@ from datetime import datetime
 
 class ProjectMemory:
     """
-    Enhanced project memory system that maintains structured information
-    about requirements, architecture, decisions, and open questions.
-    Aligned with PRD data model specification.
+    Memory system for Upwork task analysis.
+    Stores job description, requirements, complexity, tech detection, and recommendations.
     """
     
     def __init__(self, project_id: str):
@@ -15,44 +20,37 @@ class ProjectMemory:
         self.data = {
             "project_id": project_id,
             "created_at": datetime.now().isoformat(),
-            "initial_idea": None,
+            "job_description": None,
             "requirements": {
                 "functional": [],
-                "nonfunctional": [],
-                "constraints": [],
-                "assumptions": [],
+                "technical": [],
+                "business": [],
+                "timeline_budget": [],
                 "risks": []
             },
-            "architecture": {
-                "style": None,  # monolith|microservices|event-driven|agentic
-                "components": [],
-                "data_flow": []
-            },
-            "decisions": [],
-            "open_questions": [],
-            "tech_stack": []
+            "complexity_analysis": None,
+            "tech_detection": None,
+            "tech_recommendations": [],
+            "learning_path": None,
+            "third_party_requirements": None,
+            "portfolio_adaptation": None,
+            "notes": []
         }
     
-    # ========== Initial Idea ==========
+    # ========== Job Description ==========
     
-    def set_initial_idea(self, idea: str):
-        """Store the original project idea."""
-        self.data["initial_idea"] = idea
+    def set_job_description(self, description: str):
+        """Store the job description."""
+        self.data["job_description"] = description
     
-    def get_initial_idea(self) -> Optional[str]:
-        """Retrieve the original project idea."""
-        return self.data["initial_idea"]
+    def get_job_description(self) -> Optional[str]:
+        """Retrieve the job description."""
+        return self.data["job_description"]
     
     # ========== Requirements Management ==========
     
     def add_requirement(self, category: str, requirement: str):
-        """
-        Add a requirement to the specified category.
-        
-        Args:
-            category: One of 'functional', 'nonfunctional', 'constraints', 'assumptions', 'risks'
-            requirement: The requirement text
-        """
+        """Add a requirement to the specified category."""
         if category not in self.data["requirements"]:
             raise ValueError(f"Invalid requirement category: {category}")
         
@@ -67,12 +65,7 @@ class ProjectMemory:
             self.add_requirement(category, req)
     
     def get_requirements(self, category: Optional[str] = None) -> Dict[str, List]:
-        """
-        Get requirements, optionally filtered by category.
-        
-        Args:
-            category: If specified, return only that category. Otherwise return all.
-        """
+        """Get requirements, optionally filtered by category."""
         if category:
             return {category: self.data["requirements"].get(category, [])}
         return self.data["requirements"]
@@ -87,124 +80,48 @@ class ProjectMemory:
                     lines.append(f"  - {req['text']}")
         return "\n".join(lines) if lines else "No requirements defined yet."
     
-    # ========== Architecture Management ==========
+    # ========== Complexity Analysis ==========
     
-    def set_architecture_style(self, style: str):
-        """
-        Set the architecture style.
-        
-        Args:
-            style: One of 'monolith', 'microservices', 'event-driven', 'agentic'
-        """
-        valid_styles = ['monolith', 'microservices', 'event-driven', 'agentic']
-        if style not in valid_styles:
-            raise ValueError(f"Invalid architecture style. Must be one of: {valid_styles}")
-        
-        self.data["architecture"]["style"] = style
+    def set_complexity_analysis(self, analysis: Dict[str, Any]):
+        """Store complexity analysis."""
+        self.data["complexity_analysis"] = analysis
     
-    def get_architecture_style(self) -> Optional[str]:
-        """Get the current architecture style."""
-        return self.data["architecture"]["style"]
+    def get_complexity_analysis(self) -> Optional[Dict[str, Any]]:
+        """Get complexity analysis."""
+        return self.data["complexity_analysis"]
     
-    def add_component(self, component: Dict[str, Any]):
-        """
-        Add an architectural component.
-        
-        Args:
-            component: Dict with keys like 'name', 'purpose', 'type', 'explanation', etc.
-        """
-        self.data["architecture"]["components"].append(component)
+    # ========== Tech Detection ==========
     
-    def add_components_batch(self, components: List[Dict[str, Any]]):
-        """Add multiple components at once."""
-        for component in components:
-            self.add_component(component)
+    def set_tech_detection(self, detection: Dict[str, Any]):
+        """Store tech detection results."""
+        self.data["tech_detection"] = detection
     
-    def get_components(self) -> List[Dict[str, Any]]:
-        """Get all architectural components."""
-        return self.data["architecture"]["components"]
+    def get_tech_detection(self) -> Optional[Dict[str, Any]]:
+        """Get tech detection results."""
+        return self.data["tech_detection"]
     
-    def get_component_by_name(self, name: str) -> Optional[Dict[str, Any]]:
-        """Find a component by name."""
-        for component in self.data["architecture"]["components"]:
-            if component.get("name", "").lower() == name.lower():
-                return component
-        return None
+    # ========== Tech Recommendations ==========
     
-    def add_data_flow(self, flow: Dict[str, Any]):
-        """
-        Add a data flow description.
-        
-        Args:
-            flow: Dict with keys like 'from', 'to', 'data', 'protocol', etc.
-        """
-        self.data["architecture"]["data_flow"].append(flow)
+    def set_tech_recommendations(self, recommendations: List[Dict[str, Any]]):
+        """Store tech stack recommendations."""
+        self.data["tech_recommendations"] = recommendations
     
-    def get_data_flows(self) -> List[Dict[str, Any]]:
-        """Get all data flows."""
-        return self.data["architecture"]["data_flow"]
+    def get_tech_recommendations(self) -> List[Dict[str, Any]]:
+        """Get tech stack recommendations."""
+        return self.data["tech_recommendations"]
     
-    def get_architecture(self) -> Dict[str, Any]:
-        """Get the complete architecture definition."""
-        return self.data["architecture"]
+    # ========== Notes ==========
     
-    # ========== Decisions Management ==========
-    
-    def add_decision(self, decision: str, rationale: Optional[str] = None):
-        """
-        Record an architectural decision.
-        
-        Args:
-            decision: The decision made
-            rationale: Why this decision was made
-        """
-        self.data["decisions"].append({
-            "decision": decision,
-            "rationale": rationale,
+    def add_note(self, note: str):
+        """Add a note or observation."""
+        self.data["notes"].append({
+            "note": note,
             "timestamp": datetime.now().isoformat()
         })
     
-    def get_decisions(self) -> List[Dict[str, Any]]:
-        """Get all architectural decisions."""
-        return self.data["decisions"]
-    
-    # ========== Open Questions Management ==========
-    
-    def add_open_question(self, question: str):
-        """Add an open question that needs clarification."""
-        self.data["open_questions"].append({
-            "question": question,
-            "added_at": datetime.now().isoformat(),
-            "resolved": False
-        })
-    
-    def resolve_question(self, question_index: int, answer: str):
-        """Mark a question as resolved with an answer."""
-        if 0 <= question_index < len(self.data["open_questions"]):
-            self.data["open_questions"][question_index]["resolved"] = True
-            self.data["open_questions"][question_index]["answer"] = answer
-            self.data["open_questions"][question_index]["resolved_at"] = datetime.now().isoformat()
-    
-    def get_open_questions(self, include_resolved: bool = False) -> List[Dict[str, Any]]:
-        """
-        Get open questions.
-        
-        Args:
-            include_resolved: If True, include resolved questions as well
-        """
-        if include_resolved:
-            return self.data["open_questions"]
-        return [q for q in self.data["open_questions"] if not q.get("resolved", False)]
-    
-    # ========== Tech Stack Management ==========
-    
-    def set_tech_stack(self, tech_stack: List[Dict[str, Any]]):
-        """Store recommended tech stack options."""
-        self.data["tech_stack"] = tech_stack
-    
-    def get_tech_stack(self) -> List[Dict[str, Any]]:
-        """Get tech stack recommendations."""
-        return self.data["tech_stack"]
+    def get_notes(self) -> List[Dict[str, Any]]:
+        """Get all notes."""
+        return self.data["notes"]
     
     # ========== Utility Methods ==========
     
@@ -213,19 +130,28 @@ class ProjectMemory:
         return self.data
     
     def to_json(self, pretty: bool = True) -> str:
-        """Export memory as JSON string."""
+        """Export complete learning analysis as JSON string."""
         if pretty:
             return json.dumps(self.data, indent=2)
         return json.dumps(self.data)
     
     def get_summary(self) -> str:
-        """Get a human-readable summary of the project state."""
+        """Get a human-readable summary of the analysis."""
+        complexity = self.data.get("complexity_analysis", {})
+        tech_detection = self.data.get("tech_detection", {})
+        third_party = self.data.get("third_party_requirements", {})
+        
+        # Count technologies
+        explicit_tech = tech_detection.get('explicit_technologies', {}) if tech_detection else {}
+        tech_count = sum(len(techs) for techs in explicit_tech.values())
+        
         lines = [
-            f"=== Project: {self.project_id} ===",
-            f"\nArchitecture Style: {self.data['architecture']['style'] or 'Not defined'}",
-            f"Components: {len(self.data['architecture']['components'])}",
-            f"Requirements: {sum(len(reqs) for reqs in self.data['requirements'].values())}",
-            f"Decisions Made: {len(self.data['decisions'])}",
-            f"Open Questions: {len(self.get_open_questions())}",
+            f"=== Learning Analysis: {self.project_id} ===",
+            f"\n🎯 Skill Level: {complexity.get('skill_level', 'Unknown')}",
+            f"📈 Complexity Score: {complexity.get('complexity_score', 0)}/15",
+            f"⏱️  Learning Time: {complexity.get('learning_time', 'Unknown')}",
+            f"🛠️  Technologies: {tech_count} detected",
+            f"🔑 API Keys Needed: {third_party.get('total_api_keys_needed', 0) if third_party else 0}",
+            f"💰 Monthly Cost: {third_party.get('estimated_monthly_cost', 'Unknown') if third_party else 'Unknown'}",
         ]
         return "\n".join(lines)

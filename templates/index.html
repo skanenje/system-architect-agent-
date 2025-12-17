@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tech Stack Learning Analyzer</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <h1>🚀 Tech Stack Learning Analyzer</h1>
+            <p class="subtitle">Turn any project into a complete learning roadmap</p>
+        </header>
+
+        <!-- Input Section -->
+        <section class="input-section" id="inputSection">
+            <div class="card">
+                <h2>📝 Paste Your Project Description</h2>
+                <p class="hint">Upwork job, portfolio idea, tutorial, or any project</p>
+                
+                <textarea 
+                    id="projectInput" 
+                    placeholder="Example:&#10;&#10;We need an AI-powered chatbot using FastAPI and React. The bot should answer questions using RAG (Retrieval Augmented Generation). Users should be able to upload documents and chat with them. Deploy on AWS with authentication."
+                    rows="10"
+                ></textarea>
+                
+                <button id="analyzeBtn" class="btn btn-primary">
+                    <span class="btn-text">Analyze Project</span>
+                    <span class="btn-loader" style="display: none;">⏳ Analyzing...</span>
+                </button>
+                
+                <div class="examples">
+                    <p><strong>💡 Try an example:</strong></p>
+                    <button class="btn-example" data-example="rag">AI RAG Chatbot</button>
+                    <button class="btn-example" data-example="ecommerce">E-commerce Platform</button>
+                    <button class="btn-example" data-example="realtime">Real-time Chat App</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Loading Section -->
+        <section class="loading-section" id="loadingSection" style="display: none;">
+            <div class="card">
+                <div class="loader"></div>
+                <h3>🔍 Analyzing Your Project...</h3>
+                <p>This may take 30-60 seconds</p>
+                <ul class="loading-steps">
+                    <li>✓ Extracting requirements</li>
+                    <li>✓ Detecting tech stack</li>
+                    <li>✓ Analyzing skill complexity</li>
+                    <li>✓ Identifying 3rd party services</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- Results Section -->
+        <section class="results-section" id="resultsSection" style="display: none;">
+            <!-- Summary Card -->
+            <div class="card summary-card">
+                <h2>📊 Analysis Summary</h2>
+                <div id="summaryContent"></div>
+            </div>
+
+            <!-- Tab Navigation -->
+            <div class="tabs">
+                <button class="tab-btn active" data-tab="techstack">🛠️ Tech Stack</button>
+                <button class="tab-btn" data-tab="complexity">📈 Skill Complexity</button>
+                <button class="tab-btn" data-tab="thirdparty">🔌 3rd Party</button>
+                <button class="tab-btn" data-tab="learning">📚 Learning Path</button>
+                <button class="tab-btn" data-tab="portfolio">🎨 Portfolio</button>
+            </div>
+
+            <!-- Tab Content -->
+            <div class="tab-content">
+                <!-- Tech Stack Tab -->
+                <div class="tab-pane active" id="techstack">
+                    <div class="card">
+                        <h3>🛠️ Tech Stack Detection</h3>
+                        <div id="techStackContent"></div>
+                    </div>
+                </div>
+
+                <!-- Complexity Tab -->
+                <div class="tab-pane" id="complexity">
+                    <div class="card">
+                        <h3>📈 Skill Complexity Analysis</h3>
+                        <div id="complexityContent"></div>
+                    </div>
+                </div>
+
+                <!-- Third Party Tab -->
+                <div class="tab-pane" id="thirdparty">
+                    <div class="card">
+                        <h3>🔌 3rd Party Requirements</h3>
+                        <div id="thirdPartyContent"></div>
+                    </div>
+                </div>
+
+                <!-- Learning Path Tab -->
+                <div class="tab-pane" id="learning">
+                    <div class="card">
+                        <h3>📚 Learning Path</h3>
+                        <button id="generateLearningBtn" class="btn btn-secondary">
+                            Generate Learning Path
+                        </button>
+                        <div id="learningContent"></div>
+                    </div>
+                </div>
+
+                <!-- Portfolio Tab -->
+                <div class="tab-pane" id="portfolio">
+                    <div class="card">
+                        <h3>🎨 Portfolio Adaptation</h3>
+                        <button id="generatePortfolioBtn" class="btn btn-secondary">
+                            Generate Portfolio Ideas
+                        </button>
+                        <div id="portfolioContent"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="actions">
+                <button id="exportBtn" class="btn btn-secondary">💾 Export JSON</button>
+                <button id="newAnalysisBtn" class="btn btn-primary">🔄 New Analysis</button>
+            </div>
+        </section>
+
+        <!-- Error Section -->
+        <section class="error-section" id="errorSection" style="display: none;">
+            <div class="card error-card">
+                <h3>❌ Error</h3>
+                <p id="errorMessage"></p>
+                <button id="retryBtn" class="btn btn-primary">Try Again</button>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <p>Built with ❤️ for developers who learn by building</p>
+        </footer>
+    </div>
+
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>

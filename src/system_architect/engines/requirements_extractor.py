@@ -1,8 +1,8 @@
 """
 Requirements Extraction Engine
 
-Parses free-text project ideas and extracts structured requirements
-categorized as: functional, nonfunctional, constraints, assumptions, and risks.
+Parses Upwork job descriptions and extracts structured requirements
+categorized as: functional, technical, business, timeline, and risks.
 """
 
 import os
@@ -11,7 +11,7 @@ import google.generativeai as genai
 from typing import Dict, List
 
 genai.configure(api_key=os.getenv("GEMINI_API_KEY"))
-model = genai.GenerativeModel('gemini-1.5-flash')
+model = genai.GenerativeModel('gemini-2.5-flash')
 
 
 class RequirementsExtractor:
@@ -21,61 +21,57 @@ class RequirementsExtractor:
     
     def __init__(self):
         self.extraction_prompt_template = """
-You are an expert system architect and requirements analyst.
+You are an expert at analyzing Upwork job postings and extracting requirements.
 
-Your task is to analyze a project idea and extract structured requirements.
+Analyze this Upwork job description and extract structured requirements.
 
-**Project Idea:**
+**Job Description:**
 {project_idea}
 
 **Instructions:**
-Extract and categorize requirements into the following categories:
+Extract and categorize requirements:
 
-1. **FUNCTIONAL REQUIREMENTS**: What the system must DO. Specific features and capabilities.
-   - Focus on user-facing features and system behaviors
-   - Be specific and actionable
+1. **FUNCTIONAL REQUIREMENTS**: Features and capabilities the project must have
+   - User-facing features
+   - Core functionality
+   - Specific behaviors
 
-2. **NONFUNCTIONAL REQUIREMENTS**: Quality attributes and constraints.
-   - Performance (latency, throughput)
-   - Scalability (expected users, data volume)
-   - Availability/Reliability
+2. **TECHNICAL REQUIREMENTS**: Technical specifications and constraints
+   - Required technologies/frameworks
+   - Performance requirements
    - Security requirements
-   - Cost constraints
+   - Scalability needs
+   - Integration requirements
 
-3. **CONSTRAINTS**: Technical or business limitations.
-   - Technology constraints (must use X, can't use Y)
+3. **BUSINESS REQUIREMENTS**: Business goals and constraints
+   - Target audience
+   - Business objectives
+   - Success criteria
+   - Compliance/regulatory needs
+
+4. **TIMELINE & BUDGET**: Project constraints
+   - Deadlines
    - Budget constraints
-   - Timeline constraints
-   - Team size/skill constraints
-   - Regulatory/compliance requirements
+   - Milestone expectations
+   - Delivery schedule
 
-4. **ASSUMPTIONS**: Things we're assuming to be true.
-   - User behavior assumptions
-   - Technical assumptions
-   - Business assumptions
-   - Infrastructure assumptions
-
-5. **RISKS/UNKNOWNS**: Potential issues or unclear aspects.
-   - Technical risks
-   - Business risks
-   - Unclear requirements that need clarification
-   - Dependencies on external factors
+5. **RISKS & UNCLEAR ITEMS**: Potential issues or missing information
+   - Ambiguous requirements
+   - Technical challenges
+   - Missing specifications
+   - Clarifications needed
 
 **Output Format:**
-Return ONLY a valid JSON object with this exact structure:
+Return ONLY valid JSON:
 {{
   "functional": ["requirement 1", "requirement 2", ...],
-  "nonfunctional": ["requirement 1", "requirement 2", ...],
-  "constraints": ["constraint 1", "constraint 2", ...],
-  "assumptions": ["assumption 1", "assumption 2", ...],
+  "technical": ["requirement 1", "requirement 2", ...],
+  "business": ["requirement 1", "requirement 2", ...],
+  "timeline_budget": ["constraint 1", "constraint 2", ...],
   "risks": ["risk 1", "risk 2", ...]
 }}
 
-**Important:**
-- Be thorough but concise
-- Infer reasonable requirements even if not explicitly stated
-- Each item should be a clear, standalone statement
-- Return ONLY the JSON, no additional text or markdown formatting
+Return ONLY the JSON, no markdown.
 """
     
     def extract(self, project_idea: str) -> Dict[str, List[str]]:
@@ -108,7 +104,7 @@ Return ONLY a valid JSON object with this exact structure:
             requirements = json.loads(response_text)
             
             # Validate structure
-            expected_keys = ["functional", "nonfunctional", "constraints", "assumptions", "risks"]
+            expected_keys = ["functional", "technical", "business", "timeline_budget", "risks"]
             for key in expected_keys:
                 if key not in requirements:
                     requirements[key] = []
@@ -118,21 +114,20 @@ Return ONLY a valid JSON object with this exact structure:
         except json.JSONDecodeError as e:
             print(f"Warning: Failed to parse requirements JSON: {e}")
             print(f"Response was: {response_text}")
-            # Return empty structure on failure
             return {
                 "functional": [],
-                "nonfunctional": [],
-                "constraints": [],
-                "assumptions": [],
+                "technical": [],
+                "business": [],
+                "timeline_budget": [],
                 "risks": []
             }
         except Exception as e:
             print(f"Error during requirements extraction: {e}")
             return {
                 "functional": [],
-                "nonfunctional": [],
-                "constraints": [],
-                "assumptions": [],
+                "technical": [],
+                "business": [],
+                "timeline_budget": [],
                 "risks": []
             }
     
@@ -150,10 +145,10 @@ Return ONLY a valid JSON object with this exact structure:
         
         category_names = {
             "functional": "Functional Requirements",
-            "nonfunctional": "Nonfunctional Requirements",
-            "constraints": "Constraints",
-            "assumptions": "Assumptions",
-            "risks": "Risks & Unknowns"
+            "technical": "Technical Requirements",
+            "business": "Business Requirements",
+            "timeline_budget": "Timeline & Budget",
+            "risks": "Risks & Unclear Items"
         }
         
         for key, display_name in category_names.items():

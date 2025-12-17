@@ -11,7 +11,7 @@ import google.generativeai as genai
 from typing import Dict, List, Any
 
 genai.configure(api_key=os.getenv("GEMINI_API_KEY"))
-model = genai.GenerativeModel('gemini-1.5-flash')
+model = genai.GenerativeModel('gemini-2.5-flash')
 
 
 class TechStackRecommender:
@@ -21,23 +21,26 @@ class TechStackRecommender:
     
     def __init__(self):
         self.recommendation_prompt_template = """
-You are an expert technology consultant and full-stack architect.
+You are an expert technology consultant analyzing an Upwork job posting.
 
-Your task is to recommend 2-3 viable technology stack options for this project.
+Recommend 2-3 optimal technology stacks for this project.
 
-**Project Context:**
+**Job Description:**
 {project_idea}
 
-**Architecture Style:** {architecture_style}
+**Detected Technologies:**
+{detected_tech}
 
 **Requirements Summary:**
 {requirements_summary}
 
-**Key Components:**
-{components}
+**Complexity Level:** {complexity_level}
 
 **Your Task:**
-Recommend 2-3 complete technology stacks that would work well for this project.
+Recommend 2-3 complete technology stacks considering:
+- Technologies already mentioned in the job
+- Project complexity and timeline
+- Development speed vs scalability trade-offs
 
 For each stack, evaluate along these dimensions:
 1. **Integration Simplicity**: How easy is it to integrate all the pieces?
@@ -80,34 +83,31 @@ Return ONLY the JSON array, no markdown formatting.
 """
     
     def recommend(self, project_idea: str,
-                 architecture_style: str,
+                 complexity_level: str,
                  requirements: Dict[str, List[str]],
-                 components: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
+                 detected_tech: Dict[str, Any] = None) -> List[Dict[str, Any]]:
         """
         Generate tech stack recommendations.
         
         Args:
-            project_idea: Original project description
-            architecture_style: The chosen architecture style
+            project_idea: Job description
+            complexity_level: Complexity assessment
             requirements: Categorized requirements
-            components: List of architectural components
+            detected_tech: Already detected technologies
             
         Returns:
             List of recommended tech stacks
         """
-        # Format requirements summary
         req_summary = self._format_requirements_summary(requirements)
         
-        # Format components list
-        comp_list = [f"- {c.get('name', 'Unknown')}: {c.get('purpose', 'N/A')}" 
-                     for c in components[:5]]  # Top 5 components
-        comp_text = "\n".join(comp_list)
+        # Format detected tech
+        tech_text = "None specified" if not detected_tech else json.dumps(detected_tech.get('explicit_technologies', {}), indent=2)
         
         prompt = self.recommendation_prompt_template.format(
             project_idea=project_idea,
-            architecture_style=architecture_style,
+            complexity_level=complexity_level,
             requirements_summary=req_summary,
-            components=comp_text
+            detected_tech=tech_text
         )
         
         try:
@@ -133,10 +133,10 @@ Return ONLY the JSON array, no markdown formatting.
             
         except json.JSONDecodeError as e:
             print(f"Error parsing tech stack recommendations: {e}")
-            return self._get_fallback_recommendations(architecture_style)
+            return self._get_fallback_recommendations(complexity_level)
         except Exception as e:
             print(f"Error generating tech stack recommendations: {e}")
-            return self._get_fallback_recommendations(architecture_style)
+            return self._get_fallback_recommendations(complexity_level)
     
     def _format_requirements_summary(self, requirements: Dict[str, List[str]]) -> str:
         """Create a concise summary of requirements."""
@@ -155,10 +155,10 @@ Return ONLY the JSON array, no markdown formatting.
         
         return "\n".join(lines) if lines else "No specific requirements"
     
-    def _get_fallback_recommendations(self, architecture_style: str) -> List[Dict[str, Any]]:
+    def _get_fallback_recommendations(self, complexity_level: str) -> List[Dict[str, Any]]:
         """Provide basic fallback recommendations if LLM fails."""
         fallbacks = {
-            "monolith": [
+            "SIMPLE": [
                 {
                     "name": "Modern Full-Stack JavaScript",
                     "description": "Node.js backend with React frontend",
@@ -173,7 +173,7 @@ Return ONLY the JSON array, no markdown formatting.
                     "best_for": "Web applications with real-time features"
                 }
             ],
-            "microservices": [
+            "MEDIUM": [
                 {
                     "name": "Cloud-Native Stack",
                     "description": "Kubernetes-based microservices",
@@ -188,7 +188,7 @@ Return ONLY the JSON array, no markdown formatting.
                     "best_for": "Large-scale distributed systems"
                 }
             ],
-            "event-driven": [
+            "COMPLEX": [
                 {
                     "name": "Event Streaming Stack",
                     "description": "Kafka-based event-driven architecture",
@@ -203,7 +203,7 @@ Return ONLY the JSON array, no markdown formatting.
                     "best_for": "Real-time data processing and analytics"
                 }
             ],
-            "agentic": [
+            "ENTERPRISE": [
                 {
                     "name": "AI Agent Stack",
                     "description": "LLM-powered agentic system",
@@ -221,7 +221,7 @@ Return ONLY the JSON array, no markdown formatting.
             ]
         }
         
-        return fallbacks.get(architecture_style, fallbacks["monolith"])
+        return fallbacks.get(complexity_level, fallbacks["MEDIUM"])
     
     def format_recommendations(self, stacks: List[Dict[str, Any]]) -> str:
         """

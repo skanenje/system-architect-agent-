@@ -1,24 +1,19 @@
-"""
-Engine components for various agent capabilities.
-
-This module contains specialized engines for:
-- Requirements extraction
-- Architecture generation
-- Component explanation
-- Tech stack recommendations
-- Scope creep detection
-"""
+"""Tech Stack Learning Analysis Engines"""
 
 from .requirements_extractor import RequirementsExtractor
-from .architecture_generator import ArchitectureGenerator
-from .component_explainer import ComponentExplainer
+from .complexity_analyzer import ComplexityAnalyzer
+from .tech_detector import TechDetector
 from .tech_stack_recommender import TechStackRecommender
-from .scope_detector import ScopeDetector
+from .learning_path_generator import LearningPathGenerator
+from .third_party_detector import ThirdPartyDetector
+from .portfolio_adapter import PortfolioAdapter
 
 __all__ = [
-    "RequirementsExtractor",
-    "ArchitectureGenerator",
-    "ComponentExplainer",
-    "TechStackRecommender",
-    "ScopeDetector",
+    'RequirementsExtractor',
+    'ComplexityAnalyzer',
+    'TechDetector',
+    'TechStackRecommender',
+    'LearningPathGenerator',
+    'ThirdPartyDetector',
+    'PortfolioAdapter',
 ]
